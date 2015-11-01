@@ -62,15 +62,43 @@ function makeTableNonKeyFieldsByTable(entitySchema, tableSchemas) {
     }, {});
 }
 
+// returns <Fn> entity -> [missingFieldName]
+function makeRequiredFieldsAreMissing(entitySchema, tableSchemas) {
+  var requiredFields = Object.keys(entitySchema.fields)
+    .map(function(fieldName) {
+      var fieldSchema = entitySchema.fields[fieldName];
+
+      return fieldSchema.required ? fieldName : null;
+    })
+    .filter(Boolean);
+
+  return function(entity) {
+    var missingKeys = requiredFields
+      .map(function(keyName) {
+        return entity[keyName] ? null : keyName;
+      })
+      .filter(Boolean);
+
+    return missingKeys;
+  };
+}
+
+// returns [tableNames]
+function makeAllTableNames(entitySchema, tableSchemas) {
+  return tableSchemas.map(function(tableSchema) { return tableSchema.tableName; });
+}
+
 module.exports = function compileSchema(entitySchema, tableSchemas) {
   verifyParams(entitySchema, tableSchemas);
 
   var compiledSchema = {};
 
   compiledSchema.tablesContainingEntityField = makeTablesContainingEntityField(entitySchema, tableSchemas);
-  compiledSchema.tableKeysForTable = makeTableKeysForTable(entitySchema, tableSchemas);
-  compiledSchema.entityKeysFromTableKeys = makeEntityKeysFromTableKeys(entitySchema, tableSchemas);
+  compiledSchema.tableKeysByTable = makeTableKeysForTable(entitySchema, tableSchemas);
+  compiledSchema.entityKeysByTableKey = makeEntityKeysFromTableKeys(entitySchema, tableSchemas);
   compiledSchema.tableNonKeyFieldsByTable = makeTableNonKeyFieldsByTable(entitySchema, tableSchemas);
+  compiledSchema.requiredFieldsAreMissing = makeRequiredFieldsAreMissing(entitySchma, tableSchemas);
+  compiledSchema.allTableNames = makeAllTableNames(entitySchma, tableSchemas);
 
   return compiledSchema;
 }

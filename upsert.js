@@ -1,12 +1,12 @@
 
 var Set = require('set-component'),
-    async = require('async'),
-    makeDeleter = require('./delete');
+    errors = require('./errors'),
+    constants = require('./constants');
 
 function makeUpsertQueryForTable(entity, compiledSchema, tableName) {
-  var queryKeyObject = compiledSchema.tableKeysForTable
+  var queryKeyObject = compiledSchema.tableKeysByTable[tableName]
     .map(function(tableKeyName) {
-      var entityKeyName = compiledSchema.entityKeysFromTableKeys[tableName][tableKeyName];
+      var entityKeyName = compiledSchema.entityKeysByTableKey[tableName][tableKeyName];
       return [keyName, entity[entityKeyName]];
     })
     .reduce(function(acc, keyValuePair) {
@@ -29,11 +29,26 @@ function makeUpsertQueryForTable(entity, compiledSchema, tableName) {
   return query;
 }
 
+function verifyUpsert(compiledSchema, entity, queryType) {
+  var missing = compiledSchema.requiredFieldsAreMissing(entity);
+  if (missing.length) {
+    return errors.requiredKeyMissing({
+      message: 'Could not perform ' + queryType + ' query.',
+      data: {
+        providedEntity: entity,
+        missingFields: missing
+      }
+    });
+  }
+}
+
 module.exports = function makeUpsert(compiledSchema, writer, queryType) {
   queryType = queryType || constants.queryTypes.upsert;
 
   return function upsert(entity, callback) {
-    if (err) return void callback(err);
+
+    var verificationError = verifyUpsert(compiledSchema, entity, queryType);
+    if (verificationError) return void callback(verificationError);
 
     var tablesToUpdate = Object.keys(entity)
     .map(function(key) {

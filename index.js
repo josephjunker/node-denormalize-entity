@@ -1,14 +1,8 @@
-var Set = require('set-component'),
-    async = require('async'),
-    errors = require('./errors'),
-    compileSchema = require('./compileSchema');
-
-
-
-function makeUpsert(compiledSchema, writer) {}
-function makeDelete(compiledSchema, writer) {}
-function makeRead(compiledSchema, reader) {}
-
+var compileSchema = require('./compileSchema'),
+    makeInsert = require('./insert'),
+    makeUpsert = require('./upsert'),
+    makeDelete = require('./delete'),
+    makeRead = require('./read');
 
 module.exports = function makeEngine(engineParams) {
 
@@ -21,7 +15,7 @@ module.exports = function makeEngine(engineParams) {
   return {
     create: makeInsert(compiledSchema, writer),
     upsert: makeUpsert(compiledSchema, writer),
-    delete: makeDelet(compiledSchema, writer),
+    delete: makeDelete(compiledSchema, writer),
     read: makeRead(compiledSchema, reader),
   };
 }
