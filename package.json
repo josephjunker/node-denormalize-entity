@@ -1,0 +1,20 @@
+{
+  "name": "denormalize-entity",
+  "version": "1.0.0",
+  "description": "General utility for denormalizing modifications to an entity based on schemas",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "denormalize",
+    "entity",
+    "orm"
+  ],
+  "author": "Joseph Junker",
+  "license": "MIT",
+  "dependencies": {
+    "async": "^1.5.0",
+    "set-component": "^1.0.0"
+  }
+}
