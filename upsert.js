@@ -6,7 +6,7 @@ var Set = require('set-component'),
 function makeUpsertQueryForTable(entity, compiledSchema, tableName) {
   var queryKeyObject = compiledSchema.tableKeysByTable[tableName]
     .map(function(tableKeyName) {
-      var entityKeyName = compiledSchema.entityKeysByTableKey[tableName][tableKeyName];
+      var entityKeyName = compiledSchema.entityFieldNameByTableFieldName[tableName][tableKeyName];
       return [keyName, entity[entityKeyName]];
     })
     .reduce(function(acc, keyValuePair) {

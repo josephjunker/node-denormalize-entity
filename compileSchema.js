@@ -1,3 +1,7 @@
+// This file precomputes fields needed by the query files.
+// Don't look for rhyme or reason in the selection of fields here,
+// they're purely driven by the needs of the queries.
+
 var Set = require('set-component');
 
 function verifyParams(entitySchemas, tableSchemas) {
@@ -38,8 +42,8 @@ function makeTableKeysForTable(entitySchema, tableSchemas) {
     }, {});
 }
 
-// returns <Map> tableName -> tableKey -> entityKey
-function makeEntityKeysFromTableKeys(entitySchema, tableSchemas) {
+// returns <Map> tableName -> tableFieldName -> entityFieldName
+function makeEntityFieldNameFromTableFieldName(entitySchema, tableSchemas) {
   return tableSchemas
     .map(function(tableSchema) {
       return [tableSchema.tableName, tableSchema.fields];
@@ -88,6 +92,16 @@ function makeAllTableNames(entitySchema, tableSchemas) {
   return tableSchemas.map(function(tableSchema) { return tableSchema.tableName; });
 }
 
+// TODO
+// returns tableName -> [tableFieldName]
+function makeUnorderedFieldsByTable(entitySchema, tableSchemas) {
+
+}
+
+function allEntityFieldNames(entitySchema, tableSchemas) {
+  return Object.keys(entitySchema.fields);
+}
+
 module.exports = function compileSchema(entitySchema, tableSchemas) {
   verifyParams(entitySchema, tableSchemas);
 
@@ -95,10 +109,12 @@ module.exports = function compileSchema(entitySchema, tableSchemas) {
 
   compiledSchema.tablesContainingEntityField = makeTablesContainingEntityField(entitySchema, tableSchemas);
   compiledSchema.tableKeysByTable = makeTableKeysForTable(entitySchema, tableSchemas);
-  compiledSchema.entityKeysByTableKey = makeEntityKeysFromTableKeys(entitySchema, tableSchemas);
+  compiledSchema.entityFieldNameByTableFieldName = makeEntityFieldNameFromTableFieldName(entitySchema, tableSchemas);
   compiledSchema.tableNonKeyFieldsByTable = makeTableNonKeyFieldsByTable(entitySchema, tableSchemas);
   compiledSchema.requiredFieldsAreMissing = makeRequiredFieldsAreMissing(entitySchma, tableSchemas);
   compiledSchema.allTableNames = makeAllTableNames(entitySchma, tableSchemas);
+  compiledSchema.unorderedFieldsByTable = makeUnorderedFieldsByTable(entitySchema, tableSchemas);
+  compiledSchema.allEntityFieldNames = makeAllEntityFieldNames(entitySchma, tableSchemas);
 
   return compiledSchema;
 }
