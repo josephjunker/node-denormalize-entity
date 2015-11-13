@@ -14,7 +14,6 @@
   "author": "Joseph Junker",
   "license": "MIT",
   "dependencies": {
-    "async": "^1.5.0",
     "lodash.isplainobject": "^3.2.0",
     "set-component": "^1.0.0"
   }
