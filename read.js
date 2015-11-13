@@ -97,6 +97,9 @@ module.exports = function makeRead(compiledSchema, reader) {
 
   return function read(entity, callback) {
 
+    // TODO: this is the last bit
+
+
     reader(queries, function(err, results) {
       if (err) return void callback(err);
 

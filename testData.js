@@ -1,3 +1,5 @@
+// If expanding these schemas to include sets containing non-primitive data types, beware of read.unify
+
 var personEntity = {
   name: 'Person',
   fields: {
